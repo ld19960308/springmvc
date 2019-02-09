@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:p="http://www.springframework.org/schema/p"
+    xmlns:context="http://www.springframework.org/schema/context"
+    xmlns:mvc="http://www.springframework.org/schema/mvc"
+    xsi:schemaLocation="
+    http://www.springframework.org/schema/beans
+    http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+    http://www.springframework.org/schema/context
+    http://www.springframework.org/schema/context/spring-context-3.0.xsd
+    http://www.springframework.org/schema/mvc 
+    http://www.springframework.org/schema/mvc/spring-mvc-3.0.xsd">
+ 
+    <!-- 注册全局数据类型转换器start -->
+     <bean class="org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerAdapter">
+       <property name="webBindingInitializer">
+         <bean class="annotation.conversion.AddressBindingInitializer"></bean>
+       </property>
+     </bean>
+    
+    <!-- 注册全局数据类型转换器end -->
+    
+    <context:component-scan base-package="annotation,ajax,li" />
+    <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+        <property name="prefix" value="/" />
+        <property name="suffix" value=".jsp" />
+    </bean>
+    
+    <!-- 文件上传start -->
+     <bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+      <property name="maxUploadSize"><value>10485760</value></property>
+      <property name="defaultEncoding"><value>UTF-8</value></property>
+     </bean>
+    <!-- 文件上传end -->
+    
+    <!-- 自定义装配器start -->
+      <mvc:annotation-driven conversion-service="conversionService"/>
+      <!--
+ 默认的注解映射的支持 -->
+    <!-- <mvc:annotation-driven />  -->
+    <!--启用自动扫描 
+    -->
+      <!-- 
+       单独注册converter
+      <bean id="conversionService" class="org.springframework.context.support.ConversionServiceFactoryBean">
+        <property name="converters">
+          <list>
+            <bean class="annotation.conversion.StringToDateConverter" >
+              <property name="datePattern"><value>YYYY-MM-dd</value></property>
+            </bean>
+          </list>
+        </property>
+      </bean> -->
+      <!-- 
+      单独注册formatter
+      <bean id="conversionService" class="org.springframework.format.support.FormattingConversionServiceFactoryBean">
+        <property name="formatters">
+         <list>
+           <bean class="annotation.format.CarFormatter"/>
+         </list>
+        </property>
+      </bean> -->
+      
+    <!-- 同时注册formatter和converter -->
+    <!-- <bean id="register" class="annotation.format.MyFromatterRegistrar">
+     <property name="formatter" ref="carFormatter">
+     </property>
+     <property name="converter" ref="converter"></property>
+    </bean> -->
+    <bean id="carFormatter" class="annotation.format.CarFormatter">
+    </bean>
+    <bean id="converter" class="annotation.conversion.StringToDateConverter">
+     <property name="datePattern">
+      <value>YYYY-MM-dd</value>
+     </property>
+    </bean>
+    <bean id="conversionService" class="org.springframework.format.support.FormattingConversionServiceFactoryBean">
+      <property name="formatterRegistrars">
+        <set>
+          <bean class="annotation.format.MyFormatterRegistrar">
+            <property name="converter" ref="converter"></property>
+            <property name="formatter" ref="carFormatter"></property>
+          </bean>
+        </set>
+      </property>
+    </bean>
+    <!-- 自定义装配器end -->
+    
+    <!-- 国际化 -->
+    
+    <!-- <mvc:interceptors>
+      <bean class="org.springframework.web.servlet.i18n.LocaleChangeInterceptor"/>
+    </mvc:interceptors>
+    <bean id="localeResolver" class="org.springframework.web.servlet.i18n.AcceptHeaderLocaleResolver"/> -->
+    <!-- 上面是配置AcceptHeaderLocaleResolver，因为是默认所以可以不用配置 -->
+    
+    <!-- 国际化操作拦截器如果采用基于（Session/Cookie）则必须配置 -->
+    <mvc:interceptors>
+      <bean class="org.springframework.web.servlet.i18n.LocaleChangeInterceptor"/>
+      <mvc:interceptor>
+       <mvc:mapping path="/interceptor/*"></mvc:mapping>
+       <bean class="annotation.interceptor.AuthorizationInterceptor"></bean>
+      </mvc:interceptor>
+    </mvc:interceptors>
+    <bean id="localeResolver" class="org.springframework.web.servlet.i18n.SessionLocaleResolver"/>
+</beans>

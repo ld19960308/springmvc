@@ -1,0 +1,23 @@
+  方法包含的参数：ServletRequest，HttpServletRequest,ServletResponse,HttpServletResponse
+,HttpSession,WebRequest,NativeWebRerquest,Locale,InputStream,Reader,OutputStream,Writer,
+Principal,HttpEntity<?>,Map,Model,ModelMap,RedirectAttributes,Errors,BindingResult,
+SessionStatus,UriComponentsBuilder,@PathVariable,@@MatrixVariable,@RequestParam,
+@RequestHeader,@RequestBody,@RequestPart 
+  方法的返回值类型：ModelANdView，Model，Map<k,v>，View，String，HttpEntity，ResponseEntity，
+Callable，DeferredResult，Void
+@RequestMapping
+  1.value: 映射的请求地址
+  2.method: 处理的HTTP请求方式
+  3.consumes: 请求的提交内容类型（Content-Type）
+  4.produces: 指定返回内容类型，必须是request请求头（Accept）中包含的类型
+  5.params: 包含指定属性时，才调用方法进行处理
+  6.headers: request中包含指定的参数才会被处理
+@RequestParam、@RequestHeader、@CookieValue
+  1.name：指定请求头绑定名称
+  2.value：name属性别名
+  3.required：true or false 是否必须
+  4.defaultValue：默认值
+@SessionAttribute
+  1.names String[]：model中的属性名
+  2.value：names的别名
+  3.types class<?>[]：参数是否必须绑定
